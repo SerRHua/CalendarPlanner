@@ -1,0 +1,9 @@
+Download MySQL Connector/J from:
+https://dev.mysql.com/downloads/connector/j/
+
+Extract the download, copy its mysql-connector-j-*.jar into this folder, and
+rename the copied file to:
+
+mysql-connector-j.jar
+
+The Eclipse .classpath file is already configured to use that exact filename.

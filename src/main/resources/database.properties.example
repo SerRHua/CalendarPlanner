@@ -1,0 +1,5 @@
+# MySQL connection used by Calendar Planner
+# Create the empty database first: CREATE DATABASE calendar_planner;
+db.url=jdbc:mysql://localhost:3306/calendar_planner?serverTimezone=UTC
+db.user=calendar_user
+db.password=YOUR_PASSWORD_HERE
