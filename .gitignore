@@ -3,6 +3,3 @@
 bin/
 *.data
 *.tmp
-lib/mysql-connector-j.jar
-src/main/resources/database.properties
-bin/

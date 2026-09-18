@@ -99,7 +99,9 @@ public final class Database implements AutoCloseable {
     public synchronized long overallTotal() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM expenses")) { r.next(); return r.getLong(1); } }
     public synchronized long overallEarned() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM income")) { r.next(); return r.getLong(1); } }
     public synchronized List<DailyMoney> moneyTrend(YearMonth month) throws SQLException {
-        LocalDate start = month.atDay(1), end = month.atEndOfMonth();
+        return moneyTrend(month.atDay(1), month.atEndOfMonth());
+    }
+    public synchronized List<DailyMoney> moneyTrend(LocalDate start, LocalDate end) throws SQLException {
         Map<LocalDate,long[]> totals = new TreeMap<>();
         for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) totals.put(d, new long[2]);
         try (PreparedStatement p = connection.prepareStatement("SELECT expense_date,SUM(amount_cents) total FROM expenses WHERE expense_date BETWEEN ? AND ? GROUP BY expense_date")) {

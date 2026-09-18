@@ -72,7 +72,9 @@ system's login/startup applications.
 - Money-earned entries for salary, interest, refunds, or other income
 - Selected-day, Monday–Sunday week, month, and overall spending totals
 - Overall spent, earned, and saved (`earned - spent`) summaries
-- Monthly trend chart with red spending and green earnings/interest
+- Cumulative trend chart with separate red spending and green earnings/interest
+- Week, Month, 1 Year, and 3 Years trend ranges
+- Hover details showing the period and exact cumulative amounts at each point
 - Prepared JDBC statements and automatic MySQL table setup
 - System-tray background mode and one-time desktop notifications
 - Always-scrollable event, spending, and earnings lists
