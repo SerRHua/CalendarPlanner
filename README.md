@@ -8,6 +8,15 @@ The interface uses an app-style sidebar with dedicated Calendar, Tasks,
 Finances, and Trends pages, rounded dashboard cards, and color-coded financial
 information.
 
+Tasks and Finances have independent Day, Week, Month, and Year selectors with
+previous/next navigation. Trends can also be moved backward or forward without
+changing the selected calendar day. The “Go to today” action appears only on
+the Calendar page.
+
+Every page also provides a month/day/year date chooser for jumping directly to
+older or future periods. Tasks and Finances support Day, Week, Month, and Year
+views; choosing any date within a week opens that date's Monday–Sunday week.
+
 ## 1. Install and configure MySQL
 
 1. Install MySQL Community Server and make sure it is running.

@@ -68,6 +68,12 @@ public final class Database implements AutoCloseable {
             while (r.next()) items.add(new TodoItem(r.getLong("id"), r.getString("task"), localDate(r.getDate("due_date")), r.getBoolean("completed"), localDateTime(r.getTimestamp("reminder_at"))));
         } return items;
     }
+    public synchronized List<TodoItem> todosBetween(LocalDate start, LocalDate end) throws SQLException {
+        List<TodoItem> items = new ArrayList<>();
+        try (PreparedStatement p = connection.prepareStatement("SELECT * FROM todos WHERE due_date IS NULL OR due_date BETWEEN ? AND ? ORDER BY completed,due_date IS NULL,due_date,id DESC")) {
+            p.setDate(1, Date.valueOf(start)); p.setDate(2, Date.valueOf(end)); try (ResultSet r = p.executeQuery()) { while (r.next()) items.add(new TodoItem(r.getLong("id"), r.getString("task"), localDate(r.getDate("due_date")), r.getBoolean("completed"), localDateTime(r.getTimestamp("reminder_at")))); }
+        } return items;
+    }
     public synchronized void setTodoCompleted(long id, boolean completed) throws SQLException {
         try (PreparedStatement p = connection.prepareStatement("UPDATE todos SET completed=? WHERE id=?")) { p.setBoolean(1, completed); p.setLong(2, id); p.executeUpdate(); }
     }
@@ -82,6 +88,12 @@ public final class Database implements AutoCloseable {
             p.setDate(1, Date.valueOf(date)); try (ResultSet r = p.executeQuery()) { while (r.next()) items.add(new Expense(r.getLong("id"), r.getDate("expense_date").toLocalDate(), r.getString("description"), r.getLong("amount_cents"))); }
         } return items;
     }
+    public synchronized List<Expense> expensesBetween(LocalDate start, LocalDate end) throws SQLException {
+        List<Expense> items = new ArrayList<>();
+        try (PreparedStatement p = connection.prepareStatement("SELECT * FROM expenses WHERE expense_date BETWEEN ? AND ? ORDER BY expense_date DESC,LOWER(description),id")) {
+            p.setDate(1, Date.valueOf(start)); p.setDate(2, Date.valueOf(end)); try (ResultSet r = p.executeQuery()) { while (r.next()) items.add(new Expense(r.getLong("id"), r.getDate("expense_date").toLocalDate(), r.getString("description"), r.getLong("amount_cents"))); }
+        } return items;
+    }
     public synchronized void deleteExpense(long id) throws SQLException { delete("expenses", id); }
     public synchronized void addIncome(LocalDate date, String description, long cents) throws SQLException {
         try (PreparedStatement p = connection.prepareStatement("INSERT INTO income(income_date,description,amount_cents) VALUES(?,?,?)")) { p.setDate(1, Date.valueOf(date)); p.setString(2, description.trim()); p.setLong(3, cents); p.executeUpdate(); }
@@ -92,12 +104,20 @@ public final class Database implements AutoCloseable {
             p.setDate(1, Date.valueOf(date)); try (ResultSet r = p.executeQuery()) { while (r.next()) items.add(new Income(r.getLong("id"), r.getDate("income_date").toLocalDate(), r.getString("description"), r.getLong("amount_cents"))); }
         } return items;
     }
+    public synchronized List<Income> incomeBetween(LocalDate start, LocalDate end) throws SQLException {
+        List<Income> items = new ArrayList<>();
+        try (PreparedStatement p = connection.prepareStatement("SELECT * FROM income WHERE income_date BETWEEN ? AND ? ORDER BY income_date DESC,LOWER(description),id")) {
+            p.setDate(1, Date.valueOf(start)); p.setDate(2, Date.valueOf(end)); try (ResultSet r = p.executeQuery()) { while (r.next()) items.add(new Income(r.getLong("id"), r.getDate("income_date").toLocalDate(), r.getString("description"), r.getLong("amount_cents"))); }
+        } return items;
+    }
     public synchronized void deleteIncome(long id) throws SQLException { delete("income", id); }
     public synchronized long dayTotal(LocalDate date) throws SQLException { return totalBetween(date, date); }
     public synchronized long weekTotal(LocalDate date) throws SQLException { LocalDate monday = date.minusDays(date.getDayOfWeek().getValue() - 1L); return totalBetween(monday, monday.plusDays(6)); }
     public synchronized long monthTotal(LocalDate date) throws SQLException { return totalBetween(date.withDayOfMonth(1), date.withDayOfMonth(date.lengthOfMonth())); }
     public synchronized long overallTotal() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM expenses")) { r.next(); return r.getLong(1); } }
     public synchronized long overallEarned() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM income")) { r.next(); return r.getLong(1); } }
+    public synchronized long spentBetween(LocalDate start, LocalDate end) throws SQLException { return totalBetween(start, end); }
+    public synchronized long earnedBetween(LocalDate start, LocalDate end) throws SQLException { try (PreparedStatement p = connection.prepareStatement("SELECT COALESCE(SUM(amount_cents),0) FROM income WHERE income_date BETWEEN ? AND ?")) { p.setDate(1, Date.valueOf(start)); p.setDate(2, Date.valueOf(end)); try (ResultSet r = p.executeQuery()) { r.next(); return r.getLong(1); } } }
     public synchronized List<DailyMoney> moneyTrend(YearMonth month) throws SQLException {
         return moneyTrend(month.atDay(1), month.atEndOfMonth());
     }
