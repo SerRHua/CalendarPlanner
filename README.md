@@ -15,7 +15,7 @@ the Calendar page.
 
 Every page also provides a month/day/year date chooser for jumping directly to
 older or future periods. Tasks and Finances support Day, Week, Month, and Year
-views; choosing any date within a week opens that date's Monday–Sunday week.
+views; choosing any date within a week opens that date's Sunday–Saturday week.
 
 ## 1. Install and configure MySQL
 
@@ -79,7 +79,7 @@ system's login/startup applications.
 - To-do tasks with due dates, completion state, and reminders
 - Daily expense entries sorted alphabetically by description
 - Money-earned entries for salary, interest, refunds, or other income
-- Selected-day, Monday–Sunday week, month, and overall spending totals
+- Selected-day, Sunday–Saturday week, month, and overall spending totals
 - Overall spent, earned, and saved (`earned - spent`) summaries
 - Cumulative trend chart with separate red spending and green earnings/interest
 - Week, Month, 1 Year, and 3 Years trend ranges

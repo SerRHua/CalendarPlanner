@@ -112,7 +112,7 @@ public final class Database implements AutoCloseable {
     }
     public synchronized void deleteIncome(long id) throws SQLException { delete("income", id); }
     public synchronized long dayTotal(LocalDate date) throws SQLException { return totalBetween(date, date); }
-    public synchronized long weekTotal(LocalDate date) throws SQLException { LocalDate monday = date.minusDays(date.getDayOfWeek().getValue() - 1L); return totalBetween(monday, monday.plusDays(6)); }
+    public synchronized long weekTotal(LocalDate date) throws SQLException { LocalDate sunday = date.minusDays(date.getDayOfWeek().getValue() % 7L); return totalBetween(sunday, sunday.plusDays(6)); }
     public synchronized long monthTotal(LocalDate date) throws SQLException { return totalBetween(date.withDayOfMonth(1), date.withDayOfMonth(date.lengthOfMonth())); }
     public synchronized long overallTotal() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM expenses")) { r.next(); return r.getLong(1); } }
     public synchronized long overallEarned() throws SQLException { try (Statement s = connection.createStatement(); ResultSet r = s.executeQuery("SELECT COALESCE(SUM(amount_cents),0) FROM income")) { r.next(); return r.getLong(1); } }
